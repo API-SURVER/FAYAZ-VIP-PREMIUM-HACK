@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>𝗙𝗔𝗬𝗔𝗭 𝗩𝗜𝗣</title><style>
+  html, body { margin:0; padding:0; height:100%; width:100%; overflow:hidden; }
+  iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; z-index:1; }
+
+  .box {
+    width: 90px; height: 90px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #ffd700;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    padding: 0;
+    position: fixed; top: 60px; left: 50px; z-index: 9999;
+    cursor: move; user-select: none;
+    backdrop-filter: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .box.logged-in {
+    width: 200px;
+    height: 200px;
+    padding: 0;
+  }
+
+  /* লগইন পার্ট */
+  #loginPart {
+    background: linear-gradient(145deg, #1a0f0f, #2a1a1a);
+    border: 2px solid;
+    border-image: linear-gradient(45deg, #ff0000, #ffd700) 1;
+    border-radius: 20px;
+    padding: 15px 12px;
+    box-shadow: 0 0 30px rgba(255,0,0,0.3), 0 0 60px rgba(255,215,0,0.2), inset 0 0 20px rgba(255,0,0,0.2);
+    backdrop-filter: blur(5px);
+    animation: loginGlow 3s ease-in-out infinite;
+    width: 160px;
+  }
+
+  @keyframes loginGlow {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,0,0,0.3), 0 0 60px rgba(255,215,0,0.2), inset 0 0 20px rgba(255,0,0,0.2); }
+    50% { box-shadow: 0 0 50px rgba(255,215,0,0.4), 0 0 80px rgba(255,0,0,0.3), inset 0 0 30px rgba(255,215,0,0.2); }
+  }
+
+  #loginPart .title {
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ff0000, #ffd700, #ff0000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(255,0,0,0.5);
+    letter-spacing: 1.5px;
+    margin-bottom: 15px;
+    animation: titleShine 3s linear infinite;
+    background-size: 200% auto;
+  }
+
+  @keyframes titleShine {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  #loginPart input {
+    width: 120px;
+    padding: 10px 15px;
+    background: rgba(0,0,0,0.7);
+    border: 2px solid transparent;
+    border-image: linear-gradient(45deg, #ff0000, #ffd700) 1;
+    border-radius: 30px;
+    color: #ffd700;
+    font-size: 14px;
+    text-align: center;
+    margin: 8px 0;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(255,0,0,0.3);
+  }
+
+  #loginPart input:focus {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255,215,0,0.5);
+    border-image: linear-gradient(45deg, #ffd700, #ff0000) 1;
+  }
+
+  #loginPart button {
+    padding: 10px 35px;
+    background: linear-gradient(45deg, #ff0000, #ffd700, #ff0000);
+    background-size: 200% auto;
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ffd700;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    margin: 10px 0 5px;
+    animation: buttonShine 3s linear infinite;
+  }
+
+  @keyframes buttonShine {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  #loginPart button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 40px #ffd700, 0 0 80px #ff0000;
+  }
+
+  #wrong {
+    color: #ff0000;
+    font-size: 12px;
+    margin-top: 10px;
+    display: none;
+    text-shadow: 0 0 15px #ffd700, 0 0 30px #ff0000;
+    animation: wrongShake 0.3s ease;
+    font-weight: bold;
+  }
+
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* ত্রিভুজ ও রিংগুলোর কন্টেইনার */
+  .triangle-ring-container {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px 0;
+    background: transparent;
+  }
+
+  .box.logged-in .triangle-ring-container {
+    width: 140px;
+    height: 140px;
+    margin: 10px 0;
+  }
+
+  /* ত্রিভুজ - এখন এখানে টেক্সট দেখাবো */
+  .triangle {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 26px solid #ff0000;
+    filter: drop-shadow(0 0 15px #ff0000);
+    transition: all 0.5s ease-in-out;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .box.logged-in .triangle {
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-bottom: 60px solid #ff0000;
+    filter: drop-shadow(0 0 20px #ff0000);
+  }
+
+  .triangle.gold {
+    border-bottom-color: #ffd700;
+    filter: drop-shadow(0 0 20px #ffd700);
+  }
+
+  /* ত্রিভুজের ভিতরের টেক্সট */
+  .triangle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    color: white;
+    font-weight: bold;
+    font-size: 8px;
+    text-shadow: 0 0 15px currentColor;
+    white-space: nowrap;
+    z-index: 20;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .box.logged-in .triangle-text {
+    font-size: 16px;
+    transform: translate(-50%, -35%);
+  }
+
+  /* BIG টেক্সটের জন্য স্টাইল */
+  .triangle-text.big-style {
+    background: linear-gradient(45deg, #fff, #ffaaaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    letter-spacing: 2px;
+    animation: bigPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes bigPulse {
+    0%, 100% { text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; transform: translate(-50%, -35%) scale(1); }
+    50% { text-shadow: 0 0 40px #ff0000, 0 0 80px #ffd700; transform: translate(-50%, -35%) scale(1.1); }
+  }
+
+  /* SMALL টেক্সটের জন্য স্টাইল */
+  .triangle-text.small-style {
+    background: linear-gradient(45deg, #fff, #ffffaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    letter-spacing: 1px;
+    animation: smallPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes smallPulse {
+    0%, 100% { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; transform: translate(-50%, -35%) scale(1); }
+    50% { text-shadow: 0 0 40px #ffd700, 0 0 80px #ff0000; transform: translate(-50%, -35%) scale(1.1); }
+  }
+
+  /* রিংগুলোর স্টাইল */
+  .ring {
+    position: absolute;
+    border: 2px solid;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: rotate 3s linear infinite;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .ring-1 {
+    width: 50px;
+    height: 50px;
+    border-color: #ff0000 transparent #ff0000 transparent;
+    animation-duration: 3s;
+  }
+
+  .ring-2 {
+    width: 70px;
+    height: 70px;
+    border-color: transparent #ffd700 transparent #ffd700;
+    animation-duration: 4s;
+    animation-direction: reverse;
+  }
+
+  .ring-3 {
+    width: 90px;
+    height: 90px;
+    border-color: #ff0000 #ffd700 #ff0000 #ffd700;
+    animation-duration: 5s;
+  }
+
+  .box.logged-in .ring-1 {
+    width: 90px;
+    height: 90px;
+    border-width: 3px;
+  }
+
+  .box.logged-in .ring-2 {
+    width: 120px;
+    height: 120px;
+    border-width: 3px;
+  }
+
+  .box.logged-in .ring-3 {
+    width: 150px;
+    height: 150px;
+    border-width: 3px;
+  }
+
+  @keyframes rotate {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  @keyframes ringPulse {
+    0% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9) rotate(0deg); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
+    100% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.9) rotate(360deg); }
+  }
+
+  .ring-pulse {
+    animation: ringPulse 1s ease-out !important;
+  }
+
+  @keyframes textPop {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.3); }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  /* নিচের সিগন্যাল টেক্সট - আলাদা ডিজাইন */
+  .signal-bottom {
+    font-size: 9px;
+    font-weight: bold;
+    margin-top: 5px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    border: 1px solid;
+    transition: all 0.5s ease-in-out;
+    letter-spacing: 1px;
+  }
+
+  .box.logged-in .signal-bottom {
+    font-size: 14px;
+    padding: 5px 20px;
+    margin-top: 10px;
+  }
+
+  .signal-bottom.big {
+    color: #ff0000;
+    border-color: #ff0000;
+    box-shadow: 0 0 20px #ff0000;
+    text-shadow: 0 0 10px #ff0000;
+    animation: bigGlow 2s ease-in-out infinite;
+  }
+
+  .signal-bottom.small {
+    color: #ffd700;
+    border-color: #ffd700;
+    box-shadow: 0 0 20px #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    animation: smallGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes bigGlow {
+    0%, 100% { box-shadow: 0 0 20px #ff0000; }
+    50% { box-shadow: 0 0 40px #ff0000, 0 0 60px #ffd700; }
+  }
+
+  @keyframes smallGlow {
+    0%, 100% { box-shadow: 0 0 20px #ffd700; }
+    50% { box-shadow: 0 0 40px #ffd700, 0 0 60px #ff0000; }
+  }
+
+  .time { 
+    font-size: 7px; 
+    color: #ffd700; 
+    text-shadow: 0 0 8px #ff0000;
+    margin: 1px 0;
+    transition: all 0.5s ease-in-out;
+  }
+  
+  .box.logged-in .time {
+    font-size: 12px;
+    text-shadow: 0 0 10px #ff0000;
+    margin: 3px 0;
+  }
+  
+  .countdown { 
+    font-size: 10px; 
+    color: #ff0000; 
+    font-weight: bold; 
+    text-shadow: 0 0 8px #ffd700;
+    transition: all 0.5s ease-in-out;
+  }
+  
+  .box.logged-in .countdown {
+    font-size: 18px;
+    text-shadow: 0 0 12px #ffd700;
+  }
+</style></head><body><iframe src="https://tkclub2.com/#/register?invitationCode=73683205834"><script>
+(function(){
+var _0x5f21="aHR0cHM6Ly90a2NsdWIyLmNvbS8jL2hvbWUvQWxsTG90dGVyeUdhbWVzL1dpbkdvP2lkPTE=";
+var _0x1a2b="c29uaml0";
+/* This file is protected. Unauthorized copying is prohibited. */
+document.write(decodeURIComponent(escape(atob(_0x5f21))));
+console.log("Source Protected. Decryption key needed for source access.");
+})();
+</script></iframe><div class="box" id="signalBox">
+  <div id="loginPart">
+    <div class="title">⚡ 𝗙𝗔𝗬𝗔𝗭 𝗩𝗜𝗣 ⚡</div>
+    <input type="password" id="passInput" placeholder="🔑 Enter Password" autocomplete="off">
+    <button onclick="checkPassword()">LOGIN 🔓</button>
+    <div id="wrong">❌ WRONG PASSWORD ❌</div>
+  </div>
+  <div id="signalPart" style="display:none;">
+    <div class="title">𝗙𝗔𝗬𝗔𝗭 𝗩𝗜𝗣</div>
+    
+    <!-- ত্রিভুজ ও রিংগুলোর কন্টেইনার -->
+    <div class="triangle-ring-container">
+      <div class="triangle" id="triangle">
+        <span class="triangle-text" id="triangleText">-</span>
+      </div>
+      <div class="ring ring-1" id="ring1"></div>
+      <div class="ring ring-2" id="ring2"></div>
+      <div class="ring ring-3" id="ring3"></div>
+    </div>
+    
+    <div class="time" id="currentTime">--:--:--</div>
+    <div class="countdown"><span id="countdown">30</span>s</div>
+    <div class="signal-bottom" id="signalBottom">-</div>
+  </div>
+</div>
+
+<script>
+const correctPass = "fayaz1x";
+
+function checkPassword() {
+  if (document.getElementById("passInput").value === correctPass) {
+    document.getElementById("signalBox").classList.add("logged-in");
+    
+    document.getElementById("loginPart").style.display = "none";
+    document.getElementById("signalPart").style.display = "flex";
+    document.getElementById("signalPart").style.flexDirection = "column";
+    document.getElementById("signalPart").style.alignItems = "center";
+    startTimer();
+    updateResult();
+  } else {
+    let w = document.getElementById("wrong");
+    w.style.display = "block";
+    document.getElementById("passInput").value = "";
+    setTimeout(() => w.style.display = "none", 2000);
+  }
+}
+
+document.getElementById("passInput").addEventListener("keyup", e => { if(e.key==="Enter") checkPassword(); });
+
+function formatTime(d) { return d.toTimeString().substring(0,8); }
+
+function getRandomSignal() { return Math.random() > 0.5 ? "BIG" : "SMALL"; }
+
+function startTimer() {
+  setInterval(() => {
+    let n = new Date();
+    document.getElementById("currentTime").textContent = formatTime(n);
+    let s = n.getSeconds() % 30;
+    document.getElementById("countdown").textContent = s === 0 ? 30 : 30 - s;
+  }, 500);
+}
+
+const box = document.getElementById("signalBox");
+const triangle = document.getElementById("triangle");
+const triangleText = document.getElementById("triangleText");
+const signalBottom = document.getElementById("signalBottom");
+const ring1 = document.getElementById("ring1");
+const ring2 = document.getElementById("ring2");
+const ring3 = document.getElementById("ring3");
+
+function updateResult() {
+  let last = -1;
+  setInterval(() => {
+    let s = new Date().getSeconds();
+    if (s % 30 === 0 && s !== last) {
+      last = s;
+
+      let sig = getRandomSignal();
+      
+      // ত্রিভুজের ভিতরের টেক্সট আপডেট
+      triangleText.textContent = sig;
+      
+      // নিচের সিগন্যাল টেক্সট আপডেট
+      signalBottom.textContent = sig;
+      
+      if (sig === "BIG") {
+        // ত্রিভুজ
+        triangle.classList.remove("gold");
+        triangleText.classList.remove("small-style");
+        triangleText.classList.add("big-style");
+        
+        // নিচের সিগন্যাল
+        signalBottom.classList.remove("small");
+        signalBottom.classList.add("big");
+        
+        // রিং
+        ring1.style.borderColor = "#ff0000 transparent #ff0000 transparent";
+        ring2.style.borderColor = "transparent #ffd700 transparent #ffd700";
+        ring3.style.borderColor = "#ff0000 #ffd700 #ff0000 #ffd700";
+      } else {
+        // ত্রিভুজ
+        triangle.classList.add("gold");
+        triangleText.classList.remove("big-style");
+        triangleText.classList.add("small-style");
+        
+        // নিচের সিগন্যাল
+        signalBottom.classList.remove("big");
+        signalBottom.classList.add("small");
+        
+        // রিং
+        ring1.style.borderColor = "#ffd700 transparent #ffd700 transparent";
+        ring2.style.borderColor = "transparent #ff0000 transparent #ff0000";
+        ring3.style.borderColor = "#ffd700 #ff0000 #ffd700 #ff0000";
+      }
+
+      // এনিমেশন ট্রিগার
+      triangleText.style.animation = "none";
+      signalBottom.style.animation = "none";
+      ring1.classList.remove("ring-pulse");
+      ring2.classList.remove("ring-pulse");
+      ring3.classList.remove("ring-pulse");
+      
+      void triangleText.offsetWidth;
+      void signalBottom.offsetWidth;
+      void ring1.offsetWidth;
+
+      triangleText.style.animation = "textPop 0.8s ease-out";
+      signalBottom.style.animation = "textPop 0.8s ease-out";
+      ring1.classList.add("ring-pulse");
+      ring2.classList.add("ring-pulse");
+      ring3.classList.add("ring-pulse");
+    }
+  }, 100);
+}
+
+// ড্র্যাগ ফিচার
+let dragging = false, ox = 0, oy = 0;
+const start = (e) => {
+  dragging = true;
+  let clientX = e.clientX || e.touches?.[0].clientX;
+  let clientY = e.clientY || e.touches?.[0].clientY;
+  ox = clientX - box.getBoundingClientRect().left;
+  oy = clientY - box.getBoundingClientRect().top;
+};
+const move = (e) => {
+  if (!dragging) return;
+  e.preventDefault();
+  let clientX = e.clientX || e.touches?.[0].clientX;
+  let clientY = e.clientY || e.touches?.[0].clientY;
+  box.style.left = (clientX - ox) + "px";
+  box.style.top = (clientY - oy) + "px";
+};
+box.addEventListener("mousedown", start);
+document.addEventListener("mouseup", () => dragging = false);
+document.addEventListener("mousemove", move);
+box.addEventListener("touchstart", start, {passive:false});
+box.addEventListener("touchmove", move, {passive:false});
+</script>
+<style>.qc-cmp-showing { visibility: hidden !important; } body.didomi-popup-open { overflow: auto !important; } #didomi-host { visibility: hidden !important; }</style></body></html>
